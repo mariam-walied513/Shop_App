@@ -1,31 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:my_new_app/core/cache/cache_helper.dart';
-import 'package:my_new_app/core/cache/cache_keys.dart';
-import 'package:my_new_app/core/helper/my_navigator.dart';
-import 'package:my_new_app/core/utils/app_colors.dart';
-import 'package:my_new_app/features/auth/presentation/views/login_screen.dart';
-import 'package:my_new_app/features/profile/presentation/views/edit_profile.dart';
-import 'package:my_new_app/features/profile/presentation/views/setting_screen.dart';
-
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../screens/my_orders_screen.dart';
+import '../../../../screens/trending_products_screen.dart';
+import '../../../../screens/product_details_screen.dart';
+import '../../../../constants/colors.dart';
+import '../../../../cubits/auth_cubit.dart';
+import '../../../../cubits/auth_state.dart';
+import '../../../../core/cache/cache_helper.dart';
+import '../../../../data/sample_products.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final String userName =
-        CacheHelper.getValue(key: 'userName')?.toString() ?? 'Mariam Walied';
+    // ✅ اقرأ الاسم من الـ Cache (لو مش موجود → من الـ API)
+    final cachedName =
+        CacheHelper.getValue(key: 'userName')?.toString() ?? 'Guest';
 
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: AppColors.white,
+        backgroundColor: Colors.white,
         elevation: 0,
         title: const Text(
           'Profile',
           style: TextStyle(
-            color: AppColors.black,
+            color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -44,53 +45,85 @@ class ProfileView extends StatelessWidget {
                 child: Icon(
                   Icons.person,
                   size: 50,
-                  color: AppColors.primary,
+                  color: primaryPink,
                 ),
               ),
             ),
+
             const SizedBox(height: 12),
 
-            Text(
-              userName,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
-              ),
+            // ✅ الاسم من الـ Cache أو الـ AuthCubit
+            BlocBuilder<AuthCubit, AuthState>(
+              builder: (context, state) {
+                String name = cachedName;
+                if (state is AuthLoaded) {
+                  name = state.name;
+                }
+
+                return Text(
+                  name,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: primaryPink,
+                  ),
+                );
+              },
             ),
+
             const SizedBox(height: 30),
 
             _buildProfileTile(
               icon: Icons.person_outline,
               title: 'My Profile',
+              onTap: () {},
+            ),
+
+            _buildProfileTile(
+              icon: Icons.shopping_cart_outlined,
+              title: 'Products',
               onTap: () {
-                MyNavigator.goTo(
+                Navigator.push(
                   context,
-                  toPage: const EditProfileView(),
-                  type: NavigatorType.push,
+                  MaterialPageRoute(
+                    builder: (_) => ProductDetailsScreen(
+                      product: womenProduct,
+                    ),
+                  ),
                 );
               },
             ),
+
             _buildProfileTile(
               icon: Icons.shopping_bag_outlined,
               title: 'My Orders',
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const MyOrdersScreen(),
+                  ),
+                );
+              },
             ),
+
             _buildProfileTile(
               icon: Icons.favorite_border,
               title: 'My Favorites',
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const TrendingProductsScreen(),
+                  ),
+                );
+              },
             ),
+
             _buildProfileTile(
               icon: Icons.settings_outlined,
               title: 'Settings',
-              onTap: () {
-                MyNavigator.goTo(
-                  context,
-                  toPage: const SettingsView(),
-                  type: NavigatorType.push,
-                );
-              },
+              onTap: () {},
             ),
 
             const Divider(height: 30),
@@ -98,19 +131,9 @@ class ProfileView extends StatelessWidget {
             _buildProfileTile(
               icon: Icons.logout,
               title: 'Log Out',
-              color: AppColors.black,
               showArrow: false,
-              onTap: () async {
-                await CacheHelper.removeValue(key: CacheKeys.accessToken);
-                await CacheHelper.removeValue(key: CacheKeys.refreshToken);
-
-                if (context.mounted) {
-                  MyNavigator.goTo(
-                    context,
-                    toPage: const LoginScreen(),
-                    type: NavigatorType.pushAndRemoveUntil,
-                  );
-                }
+              onTap: () {
+                context.read<AuthCubit>().logout();
               },
             ),
           ],
@@ -123,7 +146,7 @@ class ProfileView extends StatelessWidget {
     required IconData icon,
     required String title,
     required VoidCallback onTap,
-    Color color = AppColors.black,
+    Color color = Colors.black,
     bool showArrow = true,
   }) {
     return ListTile(
@@ -138,7 +161,7 @@ class ProfileView extends StatelessWidget {
         ),
       ),
       trailing: showArrow
-          ? const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.grey)
+          ? const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey)
           : null,
       onTap: onTap,
     );
