@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../models/product.dart';
 import '../data/sample_products.dart';
 import '../constants/colors.dart';
+import '../features/cart/cubit/cart_cubit.dart';
 import 'place_order_screen.dart';
 
 class CheckoutScreen extends StatelessWidget {
@@ -54,6 +56,27 @@ class CheckoutScreen extends StatelessWidget {
 
               const SizedBox(height: 12),
 
+              // ✅ المنتجات الجديدة (اللي اتضافت عن طريق Add To Cart) — فوق
+              BlocBuilder<CartCubit, List<CartItem>>(
+                builder: (context, items) {
+                  if (items.isEmpty) return const SizedBox.shrink();
+
+                  return Column(
+                    children: items
+                        .map(
+                          (item) => Padding(
+                            padding: const EdgeInsets.only(bottom: 14),
+                            child: CartProductCard(
+                              product: item.product,
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  );
+                },
+              ),
+
+              // ✅ المنتجين الأساسيين (تحت)
               const CartProductCard(product: womenProduct),
 
               const SizedBox(height: 14),
@@ -138,7 +161,6 @@ class CartProductCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // IMAGE — Image.network
               ClipRRect(
                 borderRadius: BorderRadius.circular(5),
                 child: Image.network(

@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'screens/checkout_screen.dart';
+import 'features/profile/presentation/views/profile_view.dart';
 import 'cubits/orders_cubit.dart';
+import 'cubits/auth_cubit.dart';
+import 'features/cart/cubit/cart_cubit.dart';
+import 'core/cache/cache_helper.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // ✅ Init Cache
+  await CacheHelper.init();
+
   runApp(const ShoppingApp());
 }
 
@@ -12,8 +20,12 @@ class ShoppingApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => OrdersCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => OrdersCubit()),
+        BlocProvider(create: (_) => CartCubit()),
+        BlocProvider(create: (_) => AuthCubit()..login()),   // ✅ Login
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Shopping App',
@@ -29,7 +41,7 @@ class ShoppingApp extends StatelessWidget {
             surfaceTintColor: Colors.white,
           ),
         ),
-        home: const CheckoutScreen(),
+        home: const ProfileView(),
       ),
     );
   }

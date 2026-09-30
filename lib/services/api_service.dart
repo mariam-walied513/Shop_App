@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  // ✅ Singleton — instance واحدة لكل التطبيق
+  // ✅ Singleton
   static final ApiService _instance = ApiService._internal();
   factory ApiService() => _instance;
   ApiService._internal();
@@ -14,9 +14,13 @@ class ApiService {
   static const String _password = '123456';
 
   String? _accessToken;
+  Map<String, dynamic>? _userData;
 
-  // ✅ Login
-  Future<String?> login() async {
+  String? get token => _accessToken;
+  Map<String, dynamic>? get userData => _userData;
+
+  // ✅ Login + يرجع بيانات المستخدم
+  Future<Map<String, dynamic>?> loginAndGetUser() async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/login'),
@@ -28,9 +32,11 @@ class ApiService {
       print('✅ Login Body: ${response.body}');
 
       if (response.statusCode == 200) {
-        _accessToken = jsonDecode(response.body)['access_token'];
-        print('🔑 Token saved: $_accessToken');
-        return _accessToken;
+        final data = jsonDecode(response.body);
+        _accessToken = data['access_token'];
+        _userData = data['user'];
+        print('👤 User: $_userData');
+        return _userData;
       }
       return null;
     } catch (e) {
@@ -39,24 +45,20 @@ class ApiService {
     }
   }
 
+  // ✅ Login (بس للـ Token)
+  Future<String?> login() async {
+    final data = await loginAndGetUser();
+    return data != null ? _accessToken : null;
+  }
+
   // ✅ Place Order
   Future<Map<String, dynamic>?> placeOrder(
     List<Map<String, int>> items,
   ) async {
     try {
-      // ✅ لو مفيش Token → Login
-      if (_accessToken == null) {
-        print('⚠️ No token, logging in...');
-        await login();
-      }
+      if (_accessToken == null) await login();
 
-      print('🔑 Using Token: $_accessToken');
-      print('📦 Items: $items');
-
-      if (_accessToken == null) {
-        print('❌ Token is null after login');
-        return null;
-      }
+      if (_accessToken == null) return null;
 
       final response = await http.post(
         Uri.parse('$baseUrl/place_order'),
@@ -67,8 +69,8 @@ class ApiService {
         body: jsonEncode({'items': items}),
       );
 
-      print('✅ Response Status: ${response.statusCode}');
-      print('✅ Response Body: ${response.body}');
+      print('✅ Order Status: ${response.statusCode}');
+      print('✅ Order Body: ${response.body}');
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
@@ -80,5 +82,9 @@ class ApiService {
     }
   }
 
-  String? get token => _accessToken;
+  // ✅ Logout
+  void logout() {
+    _accessToken = null;
+    _userData = null;
+  }
 }

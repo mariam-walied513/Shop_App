@@ -4,11 +4,13 @@ import '../models/product.dart';
 class TrendingProductCard extends StatefulWidget {
   final Product product;
   final bool showFavorite;
+  final bool isFavoriteInitially;   // ✏️ جديد
 
   const TrendingProductCard({
     super.key,
     required this.product,
     this.showFavorite = true,
+    this.isFavoriteInitially = false,   // ✏️
   });
 
   @override
@@ -16,7 +18,13 @@ class TrendingProductCard extends StatefulWidget {
 }
 
 class _TrendingProductCardState extends State<TrendingProductCard> {
-  bool isFavorite = false;
+  late bool isFavorite;   // ✏️ late
+
+  @override
+  void initState() {
+    super.initState();
+    isFavorite = widget.isFavoriteInitially;   // ✏️ بيبدأ بالحالة المطلوبة
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,8 +95,8 @@ class _TrendingProductCardState extends State<TrendingProductCard> {
                         child: Container(
                           width: 40,
                           height: 40,
-                          decoration: BoxDecoration(
-                            color: const Color(0xffE8E8E8),
+                          decoration: const BoxDecoration(
+                            color: Color(0xffE8E8E8),
                             shape: BoxShape.circle,
                           ),
                           child: Center(

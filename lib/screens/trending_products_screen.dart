@@ -73,6 +73,10 @@ class TrendingProductsScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return TrendingProductCard(
                       product: products[index],
+                      // ✅ أول كارت بس فيه قلب
+                      showFavorite: index == 0,
+                      // ✅ أول كارت القلب مليان أحمر
+                      isFavoriteInitially: index == 0,
                     );
                   },
                 ),
