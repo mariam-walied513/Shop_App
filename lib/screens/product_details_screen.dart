@@ -23,7 +23,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // ✅ السعر من الـ product
+    
     final double unitPrice = _parsePrice(widget.product.price);
     final double totalPrice = unitPrice * quantity;
 
@@ -65,7 +65,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Image.network(
-                        // ✅ صورة التيشرت من Cloudinary
+                     
                         'https://res.cloudinary.com/dot3oekpp/image/upload/v1790344608/products/bqrprbzexu5qsraehqpg.png',
                         fit: BoxFit.contain,
                         loadingBuilder: (context, child, progress) {
@@ -230,12 +230,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   elevation: 0,
                 ),
                 onPressed: () {
-                  // ✅ ضيف للسلة
                   context
                       .read<CartCubit>()
                       .addToCart(widget.product, quantity: quantity);
 
-                  // ✅ SnackBar
+                
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
@@ -246,7 +245,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     ),
                   );
 
-                  // ✅ روح لـ CheckoutScreen
+                 
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -274,7 +273,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     );
   }
 
-  // ✅ helper: parse السعر
+  
   double _parsePrice(String price) {
     final cleaned = price.replaceAll(RegExp(r'[^\d.]'), '');
     return double.tryParse(cleaned) ?? 0;
