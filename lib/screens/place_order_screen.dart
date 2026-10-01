@@ -18,7 +18,6 @@ class PlaceOrderScreen extends StatefulWidget {
 
 class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
   LatLng? selectedLocation;
-  bool _isLoading = false;
 
   Future<void> openLocationMap() async {
     final LatLng? location = await Navigator.push<LatLng>(
@@ -37,9 +36,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     }
   }
 
-  Future<void> _placeOrder() async {
-    setState(() => _isLoading = true);
-
+  void _placeOrder() {
     final cubit = context.read<OrdersCubit>();
 
     final exists = cubit.allOrders.any(
@@ -65,31 +62,12 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     cubit.addOrder([womenProduct]);
     cubit.addOrder([jacketProduct]);
 
-    final items = [
-      {'product_id': womenProduct.id!, 'quantity': 1},
-      {'product_id': jacketProduct.id!, 'quantity': 1},
-    ];
-
-    final result = await cubit.placeOrder(items);
-
-    setState(() => _isLoading = false);
-    if (!mounted) return;
-
-    if (result != null && result['status'] == true) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Order placed! Total: \$${result['total']}'),
-          backgroundColor: primaryPink,
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Failed to place order. Saved locally.'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Order placed successfully!'),
+        backgroundColor: primaryPink,
+      ),
+    );
 
     Navigator.push(
       context,
@@ -160,10 +138,12 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                     const SizedBox(height: 12),
 
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Container(
-                            height: 78,
+                           
+                            constraints: const BoxConstraints(minHeight: 90),
                             padding: const EdgeInsets.all(11),
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -178,6 +158,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 const Text(
                                   "Address",
@@ -210,8 +191,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                           behavior: HitTestBehavior.opaque,
                           onTap: openLocationMap,
                           child: Container(
-                            width: 76,
-                            height: 78,
+                            width: 90,
+                            height: 90,
                             decoration: BoxDecoration(
                               color: primaryPink,
                               borderRadius: BorderRadius.circular(6),
@@ -258,7 +239,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: _isLoading ? null : _placeOrder,
+                  onPressed: _placeOrder,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryPink,
                     foregroundColor: Colors.white,
@@ -267,22 +248,13 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                       borderRadius: BorderRadius.circular(6),
                     ),
                   ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2.5,
-                          ),
-                        )
-                      : const Text(
-                          "Place Order",
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
+                  child: const Text(
+                    "Place Order",
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
               ),
             ),

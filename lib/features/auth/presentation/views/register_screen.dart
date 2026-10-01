@@ -25,7 +25,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   bool isPasswordSecure = true;
   bool isConfirmPasswordSecure = true;
@@ -90,7 +91,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   children: [
                     SizedBox(height: 10.h),
 
-                    
                     Text(
                       'Create an\naccount',
                       style: TextStyle(
@@ -106,7 +106,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       controller: fullNameController,
                       decoration: InputDecoration(
                         hintText: 'Full Name',
-                        hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
+                        hintStyle:
+                            TextStyle(color: Colors.grey, fontSize: 14.sp),
                         prefixIcon: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: SvgPicture.asset(
@@ -117,7 +118,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         filled: true,
                         fillColor: const Color(0xFFF3F3F3),
-                        contentPadding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 16.h, horizontal: 16.w),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.r),
                           borderSide: BorderSide.none,
@@ -131,7 +133,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       keyboardType: TextInputType.phone,
                       decoration: InputDecoration(
                         hintText: 'Phone',
-                        hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
+                        hintStyle:
+                            TextStyle(color: Colors.grey, fontSize: 14.sp),
                         prefixIcon: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: SvgPicture.asset(
@@ -142,7 +145,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         filled: true,
                         fillColor: const Color(0xFFF3F3F3),
-                        contentPadding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 16.h, horizontal: 16.w),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.r),
                           borderSide: BorderSide.none,
@@ -156,7 +160,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                         hintText: 'Email',
-                        hintStyle: TextStyle(color: AppColors.grey, fontSize: 14.sp),
+                        hintStyle:
+                            TextStyle(color: AppColors.grey, fontSize: 14.sp),
                         prefixIcon: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: SvgPicture.asset(
@@ -167,7 +172,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         filled: true,
                         fillColor: const Color(0xFFF3F3F3),
-                        contentPadding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 16.h, horizontal: 16.w),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.r),
                           borderSide: BorderSide.none,
@@ -185,7 +191,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       keyboardType: TextInputType.visiblePassword,
                       decoration: InputDecoration(
                         hintText: 'Password',
-                        hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
+                        hintStyle:
+                            TextStyle(color: Colors.grey, fontSize: 14.sp),
                         prefixIcon: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: SvgPicture.asset(
@@ -209,7 +216,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         filled: true,
                         fillColor: const Color(0xFFF3F3F3),
-                        contentPadding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 16.h, horizontal: 16.w),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.r),
                           borderSide: BorderSide.none,
@@ -227,7 +235,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       keyboardType: TextInputType.visiblePassword,
                       decoration: InputDecoration(
                         hintText: 'Confirm Password',
-                        hintStyle: TextStyle(color: AppColors.grey, fontSize: 14.sp),
+                        hintStyle:
+                            TextStyle(color: AppColors.grey, fontSize: 14.sp),
                         prefixIcon: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: SvgPicture.asset(
@@ -239,7 +248,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         suffixIcon: InkWell(
                           onTap: () {
                             setState(() {
-                              isConfirmPasswordSecure = !isConfirmPasswordSecure;
+                              isConfirmPasswordSecure =
+                                  !isConfirmPasswordSecure;
                             });
                           },
                           child: Icon(
@@ -251,7 +261,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         filled: true,
                         fillColor: const Color(0xFFF3F3F3),
-                        contentPadding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 16.h, horizontal: 16.w),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.r),
                           borderSide: BorderSide.none,
@@ -286,9 +297,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 cubit.register(
                                   name: fullNameController.text,
                                   phone: phoneController.text,
-                                  email: emailController.text, 
+                                  email: emailController.text,
                                   password: passwordController.text,
-                                  confirmPassword: confirmPasswordController.text,
+                                  confirmPassword:
+                                      confirmPasswordController.text,
                                 );
                               },
                         child: state is RegisterLoadingState

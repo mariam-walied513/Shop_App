@@ -1,19 +1,79 @@
 import 'package:flutter/material.dart';
-import '../data/search_products.dart';
 import '../models/product.dart';
 import '../widgets/trending_product_card.dart';
-import 'trending_products_screen.dart';
+import '../features/home/data/repo/home_repo.dart';
+import '../features/home/data/models/product_model.dart';
+import 'product_details_screen.dart';
 
-class SearchScreen extends StatelessWidget {
+class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final List<Product> products = [
-      searchProduct1,
-      searchProduct2,
-    ];
+  State<SearchScreen> createState() => _SearchScreenState();
+}
 
+class _SearchScreenState extends State<SearchScreen> {
+  final TextEditingController _controller = TextEditingController();
+  final HomeRepo _repo = HomeRepo();
+
+  bool _isLoading = false;
+  String _errorMsg = '';
+  List<ProductModel> _results = [];
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _search(String query) async {
+    if (query.trim().isEmpty) {
+      setState(() {
+        _results = [];
+        _errorMsg = '';
+        _isLoading = false;
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorMsg = '';
+    });
+
+    final result = await _repo.search(q: query);
+
+    result.fold(
+      (error) {
+        setState(() {
+          _isLoading = false;
+          _errorMsg = error;
+          _results = [];
+        });
+      },
+      (response) {
+        setState(() {
+          _isLoading = false;
+          _results = response.products ?? [];
+        });
+      },
+    );
+  }
+
+  Product _toProduct(ProductModel p) {
+    return Product(
+      id: p.id,
+      name: p.name ?? '',
+      image: p.imagePath ?? '',
+      rating: p.rating?.toString() ?? '0',
+      reviews: '0',
+      price: '\$ ${p.price ?? 0}',
+      oldPrice: '',
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -24,12 +84,11 @@ class SearchScreen extends StatelessWidget {
             children: [
               const SizedBox(height: 10),
 
+              // ============ HEADER ============
               Row(
                 children: [
                   IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                    onPressed: () => Navigator.pop(context),
                     icon: const Icon(
                       Icons.arrow_back_ios_new,
                       size: 21,
@@ -54,6 +113,7 @@ class SearchScreen extends StatelessWidget {
 
               const SizedBox(height: 25),
 
+              // ============ SEARCH BOX ============
               Container(
                 height: 34,
                 decoration: BoxDecoration(
@@ -70,8 +130,10 @@ class SearchScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const TextField(
-                  decoration: InputDecoration(
+                child: TextField(
+                  controller: _controller,
+                  onChanged: _search,
+                  decoration: const InputDecoration(
                     border: InputBorder.none,
                     prefixIcon: Icon(
                       Icons.search,
@@ -90,53 +152,87 @@ class SearchScreen extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const TrendingProductsScreen(),
-                    ),
-                  );
-                },
-                child: const Text(
-                  '2 Teams',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                  ),
+              // ============ RESULTS COUNT ============
+              Text(
+                '${_results.length} Items',
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
 
               const SizedBox(height: 12),
 
+              // ============ RESULTS ============
               Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: TrendingProductCard(
-                        product: products[0],
-                        showFavorite: false,
-                      ),
-                    ),
-                    const SizedBox(width: 13),
-                    Expanded(
-                      child: TrendingProductCard(
-                        product: products[1],
-                        showFavorite: false,
-                      ),
-                    ),
-                  ],
-                ),
+                child: _buildResults(),
               ),
-
-              const SizedBox(height: 20),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildResults() {
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(
+          color: Color(0xFFFF3655),
+        ),
+      );
+    }
+
+    if (_errorMsg.isNotEmpty) {
+      return Center(
+        child: Text(
+          _errorMsg,
+          style: const TextStyle(color: Colors.red),
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
+
+    if (_results.isEmpty) {
+      return const Center(
+        child: Text(
+          'Search for products...',
+          style: TextStyle(
+            fontSize: 14,
+            color: Color(0xffc5c5c5),
+          ),
+        ),
+      );
+    }
+
+    return GridView.builder(
+      physics: const BouncingScrollPhysics(),
+      itemCount: _results.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 13,
+        mainAxisSpacing: 15,
+        childAspectRatio: 0.75,
+      ),
+      itemBuilder: (context, index) {
+        final productModel = _results[index];
+        final product = _toProduct(productModel);
+
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ProductDetailsScreen(product: product),
+              ),
+            );
+          },
+          child: TrendingProductCard(
+            product: product,
+            showFavorite: false,
+          ),
+        );
+      },
     );
   }
 }

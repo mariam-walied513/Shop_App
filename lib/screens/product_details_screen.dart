@@ -21,9 +21,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   int quantity = 1;
   bool isFavorite = false;
 
+  double _parsePrice(String price) {
+    final cleaned = price.replaceAll(RegExp(r'[^\d.]'), '');
+    return double.tryParse(cleaned) ?? 0;
+  }
+
   @override
   Widget build(BuildContext context) {
-    
     final double unitPrice = _parsePrice(widget.product.price);
     final double totalPrice = unitPrice * quantity;
 
@@ -51,7 +55,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ============ IMAGE ============
             Container(
               height: 300,
               width: double.infinity,
@@ -65,17 +68,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Image.network(
-                     
-                        'https://res.cloudinary.com/dot3oekpp/image/upload/v1790344608/products/bqrprbzexu5qsraehqpg.png',
+                        widget.product.image,
                         fit: BoxFit.contain,
-                        loadingBuilder: (context, child, progress) {
-                          if (progress == null) return child;
-                          return const Center(
-                            child: CircularProgressIndicator(
-                              color: primaryPink,
-                            ),
-                          );
-                        },
                         errorBuilder: (_, __, ___) => const Icon(
                           Icons.image_not_supported,
                           size: 60,
@@ -98,9 +92,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           size: 20,
                         ),
                         onPressed: () {
-                          setState(() {
-                            isFavorite = !isFavorite;
-                          });
+                          setState(() => isFavorite = !isFavorite);
                         },
                       ),
                     ),
@@ -111,10 +103,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
             const SizedBox(height: 24),
 
-            // ============ NAME ============
-            const Text(
-              'Mens Starry',
-              style: TextStyle(
+            Text(
+              widget.product.name,
+              style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
@@ -123,9 +114,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
             const SizedBox(height: 12),
 
-            // ============ DESCRIPTION ============
             Text(
-              'Vision Alta Men\'s Shoes Size (All Colours) Mens Starry Sky Printed Shirt 100% Cotton Fabric',
+              '100% Cotton Fabric — Premium Quality',
               style: TextStyle(
                 fontSize: 13,
                 color: Colors.grey[600],
@@ -135,7 +125,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
             const SizedBox(height: 24),
 
-            // ============ PRICE + QUANTITY ============
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -148,16 +137,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   ),
                 ),
 
-                // QUANTITY
                 Row(
                   children: [
-                    // MINUS
                     InkWell(
                       onTap: () {
                         if (quantity > 1) {
-                          setState(() {
-                            quantity--;
-                          });
+                          setState(() => quantity--);
                         }
                       },
                       child: Container(
@@ -174,7 +159,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ),
                       ),
                     ),
-
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       child: Text(
@@ -185,14 +169,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ),
                       ),
                     ),
-
-                    // PLUS
                     InkWell(
-                      onTap: () {
-                        setState(() {
-                          quantity++;
-                        });
-                      },
+                      onTap: () => setState(() => quantity++),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 10, vertical: 4),
@@ -217,7 +195,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
             const SizedBox(height: 40),
 
-            // ============ ADD TO CART ============
             SizedBox(
               width: double.infinity,
               height: 52,
@@ -234,18 +211,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       .read<CartCubit>()
                       .addToCart(widget.product, quantity: quantity);
 
-                
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(
-                        '${widget.product.name} added to cart!',
-                      ),
+                      content: Text('${widget.product.name} added to cart!'),
                       backgroundColor: primaryPink,
                       duration: const Duration(seconds: 1),
                     ),
                   );
 
-                 
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -271,11 +244,5 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         ),
       ),
     );
-  }
-
-  
-  double _parsePrice(String price) {
-    final cleaned = price.replaceAll(RegExp(r'[^\d.]'), '');
-    return double.tryParse(cleaned) ?? 0;
   }
 }

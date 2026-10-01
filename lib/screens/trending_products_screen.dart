@@ -59,23 +59,21 @@ class TrendingProductsScreen extends StatelessWidget {
             // ================= PRODUCTS =================
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(15, 4, 15, 15),
+                padding: const EdgeInsets.all(12),
                 child: GridView.builder(
                   physics: const BouncingScrollPhysics(),
                   itemCount: products.length,
                   gridDelegate:
                       const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    crossAxisSpacing: 13,
-                    mainAxisSpacing: 15,
-                    childAspectRatio: 0.75,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 0.6,   
                   ),
                   itemBuilder: (context, index) {
                     return TrendingProductCard(
                       product: products[index],
-                      // ✅ أول كارت بس فيه قلب
                       showFavorite: index == 0,
-                      // ✅ أول كارت القلب مليان أحمر
                       isFavoriteInitially: index == 0,
                     );
                   },

@@ -56,7 +56,7 @@ class CheckoutScreen extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-            
+             
               BlocBuilder<CartCubit, List<CartItem>>(
                 builder: (context, items) {
                   if (items.isEmpty) return const SizedBox.shrink();
@@ -76,7 +76,7 @@ class CheckoutScreen extends StatelessWidget {
                 },
               ),
 
-              
+           
               const CartProductCard(product: womenProduct),
 
               const SizedBox(height: 14),

@@ -1,36 +1,80 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_new_app/features/cart/data/models/cart_item_model.dart';
-import 'package:my_new_app/features/cart/presntation/cubit/cart/cart_state.dart';
-import 'package:my_new_app/features/home/data/models/product_model.dart';
+import '../../../../../models/product.dart';
 
-class CartCubit extends Cubit<CartState> {
-  CartCubit() : super(CartInitState());
-  List<CartItemModel> cart = [];
+class CartCubit extends Cubit<List<CartItem>> {
+  CartCubit() : super([]);
 
-  void addProduct({required ProductModel product, int quantity = 1}) {
-    cart.add(CartItemModel(productModel: product, quantity: quantity));
-    emit(CartAddState());
+  // ✅ ضيف منتج للسلة
+  void addToCart(Product product, {int quantity = 1}) {
+    final items = List<CartItem>.from(state);
+
+    final index = items.indexWhere((i) => i.product.id == product.id);
+    if (index != -1) {
+      items[index] = items[index].copyWith(
+        quantity: items[index].quantity + quantity,
+      );
+    } else {
+      items.add(CartItem(product: product, quantity: quantity));
+    }
+
+    emit(items);
   }
 
-  void removeProduct({required int index}) {
-    cart.removeAt(index);
-    emit(CartRemoveState());
+  // ✅ شيل منتج من السلة
+  void removeFromCart(Product product) {
+    final items = state.where((i) => i.product.id != product.id).toList();
+    emit(items);
   }
 
+  // ✅ زوّد الكمية
   void addQuantity({required int index}) {
-    cart[index].quantity += 1;
-    emit(CartAddState());
-  }
-
-  void removeQuantity({required int index}) {
-    if (cart[index].quantity > 1) {
-      cart[index].quantity -= 1;
-      emit(CartRemoveState());
+    final items = List<CartItem>.from(state);
+    if (index >= 0 && index < items.length) {
+      items[index] = items[index].copyWith(
+        quantity: items[index].quantity + 1,
+      );
+      emit(items);
     }
   }
 
+  // ✅ قلل الكمية
+  void removeQuantity({required int index}) {
+    final items = List<CartItem>.from(state);
+    if (index >= 0 && index < items.length && items[index].quantity > 1) {
+      items[index] = items[index].copyWith(
+        quantity: items[index].quantity - 1,
+      );
+      emit(items);
+    }
+  }
+
+  // ✅ شيل الكل
   void clearCart() {
-    cart = [];
-    emit(CartClearState());
+    emit([]);
+  }
+
+  // ✅ الإجمالي
+  double get total {
+    double sum = 0;
+    for (var item in state) {
+      final priceStr = item.product.price.replaceAll(RegExp(r'[^\d.]'), '');
+      final price = double.tryParse(priceStr) ?? 0;
+      sum += price * item.quantity;
+    }
+    return sum;
+  }
+}
+
+class CartItem {
+  final Product product;
+  final int quantity;
+
+  CartItem({required this.product, required this.quantity});
+
+  CartItem copyWith({int? quantity}) {
+    return CartItem(
+      product: product,
+      quantity: quantity ?? this.quantity,
+    );
   }
 }

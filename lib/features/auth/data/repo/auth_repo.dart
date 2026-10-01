@@ -9,7 +9,7 @@ import 'package:my_new_app/features/auth/data/models/login_response_model.dart';
 class AuthRepo {
   final ApiHelper apiHelper = ApiHelper();
 
-  // 1. دالة الـ Login
+ 
   Future<Either<String, UserModel>> login({
     required String email,
     required String password,
@@ -45,7 +45,7 @@ class AuthRepo {
         );
       }
 
-      // التأكد أن userModel ليس null قبل إرجاعه
+    
       if (model.userModel != null) {
         return right(model.userModel!);
       } else {
@@ -56,7 +56,7 @@ class AuthRepo {
     }
   }
 
-  // 2. دالة الـ Register (تعديل المعالجة لتناسب استجابة الـ API التي لا تحتوي على user)
+ 
   Future<Either<String, UserModel>> register({
     required String name,
     required String phone,
@@ -84,7 +84,7 @@ class AuthRepo {
 
       LoginResponseModel model = LoginResponseModel.fromJson(jsonResponse);
 
-      // حفظ التوكين لو الـ API رجعه في الـ Register
+     
       if (model.accessToken != null) {
         await CacheHelper.setValue(
           key: CacheKeys.accessToken,
@@ -99,7 +99,7 @@ class AuthRepo {
         );
       }
 
-      // يجب إرجاع UserModel لأن نوع نتيجة الدالة هو UserModel.
+      
       if ((model.status == true || jsonResponse['status'] == 'true') &&
           model.userModel != null) {
         return right(model.userModel!);

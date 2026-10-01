@@ -4,13 +4,13 @@ import '../models/product.dart';
 class TrendingProductCard extends StatefulWidget {
   final Product product;
   final bool showFavorite;
-  final bool isFavoriteInitially;   // ✏️ جديد
+  final bool isFavoriteInitially;
 
   const TrendingProductCard({
     super.key,
     required this.product,
     this.showFavorite = true,
-    this.isFavoriteInitially = false,   // ✏️
+    this.isFavoriteInitially = false,
   });
 
   @override
@@ -18,12 +18,12 @@ class TrendingProductCard extends StatefulWidget {
 }
 
 class _TrendingProductCardState extends State<TrendingProductCard> {
-  late bool isFavorite;   // ✏️ late
+  late bool isFavorite;
 
   @override
   void initState() {
     super.initState();
-    isFavorite = widget.isFavoriteInitially;   // ✏️ بيبدأ بالحالة المطلوبة
+    isFavorite = widget.isFavoriteInitially;
   }
 
   @override
@@ -47,7 +47,7 @@ class _TrendingProductCardState extends State<TrendingProductCard> {
           children: [
             // ================= IMAGE =================
             Expanded(
-              flex: 6,
+              flex: 5,  
               child: Stack(
                 children: [
                   Container(
@@ -117,31 +117,32 @@ class _TrendingProductCardState extends State<TrendingProductCard> {
 
             // ================= DETAILS =================
             Expanded(
-              flex: 4,
+              flex: 5,  
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(9, 7, 8, 5),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,   
                   children: [
                     Text(
                       widget.product.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 14,   
                         fontWeight: FontWeight.w500,
                         color: Colors.black,
                       ),
                     ),
 
-                    const SizedBox(height: 3),
+                    const SizedBox(height: 2),   
 
                     const Text(
                       'Mens Starry Sky Printed Shirt',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 10.5,
+                        fontSize: 10,
                         fontWeight: FontWeight.w400,
                         color: Color(0xff555555),
                       ),
@@ -154,24 +155,24 @@ class _TrendingProductCardState extends State<TrendingProductCard> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 10.5,
+                        fontSize: 10,
                         fontWeight: FontWeight.w400,
                         color: Color(0xff555555),
                       ),
                     ),
 
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 3),   
 
                     Text(
                       widget.product.price,
                       style: const TextStyle(
-                        fontSize: 13,
+                        fontSize: 12,   
                         fontWeight: FontWeight.w600,
                         color: Colors.black,
                       ),
                     ),
 
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 3),   
 
                     Row(
                       children: [
@@ -179,20 +180,20 @@ class _TrendingProductCardState extends State<TrendingProductCard> {
                           4,
                           (index) => const Icon(
                             Icons.star,
-                            size: 14,
+                            size: 12,  
                             color: Color(0xffffb400),
                           ),
                         ),
                         const Icon(
                           Icons.star_border,
-                          size: 14,
+                          size: 12,
                           color: Color(0xffD0D0D0),
                         ),
                         const SizedBox(width: 4),
                         Text(
                           widget.product.reviews,
                           style: const TextStyle(
-                            fontSize: 9.5,
+                            fontSize: 9,
                             color: Color(0xffBDBDBD),
                           ),
                         ),
